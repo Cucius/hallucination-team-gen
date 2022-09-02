@@ -15,6 +15,7 @@ const start = async () => {
   await promptUser().then(() => {
     console.log(teamMembers);
     // generate html
+    // make html template
   });
 };
 
@@ -42,7 +43,7 @@ const promptUser = async () => {
       },
     ];
 
-    const managerQuestions = questions;
+    const managerQuestions = [...questions];
 
     managerQuestions.push({
       type: "input",

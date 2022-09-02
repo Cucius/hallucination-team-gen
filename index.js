@@ -1,19 +1,16 @@
-const Employee = require("./lib/employee");
+const inquirer = require("inquirer");
+
 const Manager = require("./lib/manager");
 const Engineer = require("./lib/engineer");
 const Intern = require("./lib/intern");
-// WHEN I start the application
-// THEN I am prompted to enter the team manager’s name, employee ID, email address, and office
-// WHEN I enter the team manager’s name, employee ID, email address, and office number
-// THEN I am presented with a menu with the option to add an engineer or an intern or to finish building my team
-const employee = await new Employee();
-const intern = new Intern();
-const engineer = new Engineer();
-const manager = new Manager();
-employee.promptUser();
 
-// WHEN I select the engineer option
-// THEN I am prompted to enter the engineer’s name, ID, email, and GitHub username, and I am taken back to the menu
+// call rest of functions in order
+const start = async () => {
+  await promptUser();
+};
+
+// get answers from user
+const promptUser = async () => {};
 
 /*
   @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

@@ -27,17 +27,17 @@ const promptUser = async () => {
   const questions = [
     {
       type: "input",
-      message: `What is the name of the ${managerFlag ? "manager" : "employee"} ?`,
+      message: `What is the name of the employee ?`,
       name: "name",
     },
     {
       type: "input",
-      message: `Enter the ${managerFlag ? "manager" : "employee"}'s ID:`,
+      message: `Enter the employee ID:`,
       name: "id",
     },
     {
       type: "input",
-      message: `Enter the ${managerFlag ? "manager" : "employee"}'s email:`,
+      message: `Enter the employee's email:`,
       name: "email",
     },
   ];

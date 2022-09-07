@@ -8,27 +8,26 @@ const Intern = require("./lib/intern");
 let teamMembers = [];
 
 // flag to control questions
-let continueAddingMembers = true;
+
+let managerFlag = true;
 
 // call rest of functions in order
 const start = async () => {
-  await promptUser().then(() => {
-    console.log(teamMembers);
-    // generate html
-    // make html template
-  });
+  await promptUser();
+  console.log(teamMembers);
+  // generate html
+  // make html template
 };
 
 // get answers from user
 const promptUser = async () => {
-  let managerFlag = true;
   let nextEmployee = "";
 
+  //runs through questions if managerFlag is true
   const questions = [
     {
       type: "input",
-      message: `What is the name of the ${managerFlag ? "manager" : "employee"}?`,
-
+      message: `What is the name of the ${managerFlag ? "manager" : "employee"} ?`,
       name: "name",
     },
     {
@@ -60,49 +59,65 @@ const promptUser = async () => {
     },
   ];
 
-  const dealWithAnswers = async () => {
-    managerFlag = false;
+  // const dealWithAnswers = async () => {
+  //   managerFlag = false;
+  //   let roleSpecificPrompts = "";
+
+  const addEng = async () => {
     let roleSpecificPrompts = "";
+    const answers = await inquirer.prompt(questions);
 
-    if (nextEmployee === "Engineer") {
-      const answers = await inquirer.prompt(questions);
+    roleSpecificPrompts = await inquirer.prompt([
+      {
+        type: "input",
+        message: "Enter the Employee's GitHub Username:",
+        name: "gitHub",
+      },
+    ]);
 
-      roleSpecificPrompts = await inquirer.prompt([
-        {
-          type: "input",
-          message: "Enter the Employee's GitHub Username:",
-          name: "gitHub",
-        },
-      ]);
+    const engineer = new Engineer(answers.name, answers.id, answers.email, roleSpecificPrompts.gitHub);
+    teamMembers.push(engineer);
 
-      const engineer = new Engineer(answers.name, answers.id, answers.email, roleSpecificPrompts.gitHub);
-      teamMembers.push(engineer); // push new team member
-
-      const menu = await inquirer.prompt(continueOrNot);
-    } else if (nextEmployee === "Intern") {
-      const answers = await inquirer.prompt(questions);
-
-      roleSpecificPrompts = await inquirer.prompt([
-        {
-          type: "input",
-          message: "Enter the Employee's school:",
-          name: "school",
-        },
-      ]);
-
-      const intern = new Intern(answers.name, answers.id, answers.email, roleSpecificPrompts.school);
-      teamMembers.push(intern); // push new team member
-
-      const menu = await inquirer.prompt(continueOrNot);
-    } else if (nextEmployee === "No more team members") {
-      // flip control flag
-      continueAddingMembers = false;
+    const menu = await inquirer.prompt(continueOrNot);
+    if (menu.role === "No more team members") {
+      nextEmployee = "No more team members";
+    } else if (menu.role === "Engineer") {
+      nextEmployee = "Engineer";
+      await addEng();
+    } else if (menu.role === "Intern") {
+      nextEmployee = "Intern";
+      await addInt();
     }
   };
 
-  if (managerFlag) {
+  const addInt = async () => {
+    let roleSpecificPrompts = "";
+    const answers = await inquirer.prompt(questions);
+
+    roleSpecificPrompts = await inquirer.prompt([
+      {
+        type: "input",
+        message: "Enter the Employee's school:",
+        name: "school",
+      },
+    ]);
+
+    const intern = new Intern(answers.name, answers.id, answers.email, roleSpecificPrompts.school);
+    teamMembers.push(intern);
+
+    const menu = await inquirer.prompt(continueOrNot);
+    if (menu.role === "No more team members") {
+      nextEmployee = "No more team members";
+    } else if (menu.role === "Engineer") {
+      nextEmployee = "Engineer";
+      await addEng();
+    } else if (menu.role === "Intern") {
+      nextEmployee = "Intern";
+      await addInt();
+    }
+  };
+  if (managerFlag == true) {
     const answers = await inquirer.prompt(managerQuestions);
-    managerFlag = false;
 
     const manager = new Manager(answers.name, answers.id, answers.email, answers.officeNumber);
     teamMembers.push(manager);
@@ -110,51 +125,27 @@ const promptUser = async () => {
     const menu = await inquirer.prompt(continueOrNot);
 
     if (menu.role === "No more team members") {
-      continueAddingMembers = false;
       nextEmployee = "No more team members";
     } else if (menu.role === "Engineer") {
       nextEmployee = "Engineer";
-      await dealWithAnswers();
+      await addEng();
     } else if (menu.role === "Intern") {
       nextEmployee = "Intern";
-      await dealWithAnswers();
+      await addInt();
     }
   } else {
-    const answers = await inquirer.prompt(continueOrNot);
+    const menu = await inquirer.prompt(continueOrNot);
 
-    await dealWithAnswers();
+    if (menu.role === "No more team members") {
+      nextEmployee = "No more team members";
+    } else if (menu.role === "Engineer") {
+      nextEmployee = "Engineer";
+      await addEng();
+    } else if (menu.role === "Intern") {
+      nextEmployee = "Intern";
+      await addInt();
+    }
   }
 };
 
-// const menu = async () => {
-//   const continueOrNot = await inquirer.prompt([
-//     {
-//       type: "list",
-//       message: "Add another Team Member",
-//       choices: ["Engineer", "Intern", "No more team members"],
-//       name: "role",
-//     },
-//   ]);
-
-//   if (continueOrNot.role === "No more team members") {
-//     continueAddingMembers = false;
-//     nextEmployee = "No more team members";
-//   } else if (continueOrNot.role === "Engineer") {
-//     nextEmployee = "Engineer";
-//   } else if (continueOrNot.role === "Intern") {
-//     nextEmployee = "Intern";
-//   }
-// };
-
 start();
-
-/*
-  @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-*/
-
-// use class to determine html
-
-// html based on employee role
-// new employee -> new manager
-// employee.id employee.email .... manager.officeNumber
-//
